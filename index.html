@@ -1,0 +1,200 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Accessibility Layer</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+<h1>AI Accessibility Layer</h1>
+<p>Convert educational content into accessible learning formats</p>
+</header>
+
+<main class="container">
+
+<div class="input-section">
+<h2>Educational Content</h2>
+<textarea id="inputText" placeholder="Paste educational content here..."></textarea>
+</div>
+
+<div class="options-section">
+<h2>Accessibility Options</h2>
+
+<select id="mode">
+<option value="simplify">Simplify for 10 Year Old</option>
+<option value="dyslexia">Dyslexia Friendly</option>
+<option value="summary">Summarize</option>
+<option value="example">Explain with Example</option>
+</select>
+
+<!-- Language dropdown -->
+<select id="language"></select>
+
+<!-- Custom language input -->
+<input
+  type="text"
+  id="customLanguage"
+  placeholder="Enter preferred language"
+  style="display:none; margin-top:8px;"
+>
+
+<button onclick="generateText()">Generate</button>
+
+</div>
+
+<div class="output-section">
+<h2>Adaptive Learning Version</h2>
+<div id="output"></div>
+
+<div id="loading" style="display:none;"> <!--loading feedback-->
+Generating accessible version...
+</div>
+
+</div>
+
+</main>
+
+<section class="impact-section">
+
+<h2>Accessibility Impact</h2>
+
+<div class="scores">
+
+<div class="score-card">
+<h3>Before</h3>
+<p id="beforeScore">--</p>
+</div>
+
+<div class="score-card">
+<h3>After</h3>
+<p id="afterScore">--</p>
+</div>
+
+</div>
+
+</section>
+
+<footer>
+<p> Empowering diverse learners through accessible technology </p>
+</footer>
+
+
+<script>
+// 4 main Indian languages to show first
+const mainLanguages = {
+  "hi": "Hindi",
+  "te": "Telugu",
+  "ta": "Tamil",
+  "bn": "Bengali"
+};
+
+// Full list of world languages (ISO 639-1 popular/major)
+const allWorldLanguages = [
+  "Abkhaz","Afar","Afrikaans","Akan","Albanian","Amharic","Arabic","Aragonese","Armenian","Assamese",
+  "Avaric","Avestan","Aymara","Azerbaijani","Bambara","Bashkir","Basque","Belarusian","Bengali",
+  "Bihari","Bislama","Bosnian","Breton","Bulgarian","Burmese","Catalan","Chamorro","Chechen",
+  "Chichewa","Chinese","Chuvash","Cornish","Corsican","Cree","Croatian","Czech","Danish",
+  "Divehi","Dutch","Dzongkha","English","Esperanto","Estonian","Ewe","Faroese","Fijian","Finnish",
+  "French","Fula","Galician","Georgian","German","Greek","Guarani","Gujarati","Haitian","Hausa",
+  "Hebrew","Herero","Hindi","Hiri Motu","Hungarian","Interlingua","Indonesian","Interlingue","Irish",
+  "Igbo","Inupiaq","Ido","Icelandic","Italian","Inuktitut","Japanese","Javanese","Kalaallisut",
+  "Kannada","Kanuri","Kashmiri","Kazakh","Khmer","Kikuyu","Kinyarwanda","Kyrgyz","Komi","Kongo",
+  "Korean","Kurdish","Kwanyama","Latin","Luxembourgish","Ganda","Limburgish","Lingala","Lao","Lithuanian",
+  "Luba-Katanga","Latvian","Manx","Macedonian","Malagasy","Malay","Malayalam","Maltese","Maori",
+  "Marathi","Marshallese","Mongolian","Nauru","Navajo","Northern Ndebele","Nepali","Ndonga",
+  "Norwegian Bokmål","Norwegian Nynorsk","Norwegian","Nuosu","Southern Ndebele","Occitan","Ojibwe",
+  "Old Church Slavonic","Oromo","Oriya","Ossetian","Punjabi","Pali","Persian","Polish","Pashto",
+  "Portuguese","Quechua","Romansh","Kirundi","Romanian","Russian","Sanskrit","Sardinian","Sindhi",
+  "Northern Sami","Samoan","Sango","Serbian","Scottish Gaelic","Shona","Sinhala","Slovak","Slovene",
+  "Somali","Southern Sotho","Spanish","Sundanese","Swahili","Swati","Swedish","Tamil","Telugu",
+  "Tajik","Thai","Tigrinya","Tibetan","Turkmen","Tagalog","Tswana","Tonga","Turkish","Tsonga",
+  "Tatar","Twi","Tahitian","Uighur","Ukrainian","Urdu","Uzbek","Venda","Vietnamese","Volapük",
+  "Walloon","Welsh","Wolof","Western Frisian","Xhosa","Yiddish","Yoruba","Zhuang","Zulu"
+];
+
+// Populate the main 4 languages
+const dropdown = document.getElementById("language");
+Object.entries(mainLanguages).forEach(([code, name]) => {
+  const option = document.createElement("option");
+  option.value = code;
+  option.text = name;
+  dropdown.appendChild(option);
+});
+
+// Add "Other" option
+const otherOption = document.createElement("option");
+otherOption.value = "other";
+otherOption.text = "Other...";
+dropdown.appendChild(otherOption);
+
+// Show custom input when "Other" is selected
+function toggleCustomLanguage() {
+  const customBox = document.getElementById("customLanguage");
+  if(dropdown.value === "other") {
+    customBox.style.display = "block";
+    customBox.placeholder = "Type any language (e.g., French, Japanese)";
+  } else {
+    customBox.style.display = "none";
+    customBox.value = "";
+  }
+}
+dropdown.addEventListener("change", toggleCustomLanguage);
+
+// Generate Text function
+async function generateText() {
+  const text = document.getElementById("inputText").value.trim();
+  const mode = document.getElementById("mode").value;
+  let language = dropdown.value;
+
+  if(language === "other") {
+    language = document.getElementById("customLanguage").value.trim();
+    if(!language) {
+      alert("Please enter your preferred language");
+      return;
+    }
+    // Optional: validate against all world languages
+    if(!allWorldLanguages.includes(language)) {
+      const proceed = confirm(`${language} is not in the popular languages list. Continue?`);
+      if(!proceed) return;
+    }
+  }
+
+  if(!text) {
+    alert("Please enter educational content");
+    return;
+  }
+
+  const loading = document.getElementById("loading");
+  const output = document.getElementById("output");
+  loading.style.display = "block";
+  output.innerHTML = "";
+
+  try {
+    const response = await fetch("http://localhost:5000/generate", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ text, mode, language })
+    });
+
+    if(!response.ok) throw new Error("Server error");
+
+    const data = await response.json();
+    output.innerHTML = data.result || "No result returned";
+
+    document.getElementById("beforeScore").innerText = data.beforeScore || "--";
+    document.getElementById("afterScore").innerText = data.afterScore || "--";
+
+  } catch(err) {
+    console.error(err);
+    alert("Failed to generate text. Check server.");
+  } finally {
+    loading.style.display = "none";
+  }
+}
+</script>
+
+</body>
+</html>
