@@ -31,40 +31,40 @@ explanations with examples
 
 This makes learning more inclusive and accessible for everyone.
 
-Key Features
-
-Text Simplification
+**Key Features
+**
+**Text Simplification**
 Explains complex educational concepts in simple language suitable for younger learners.
 
-Dyslexia-Friendly Mode
+**Dyslexia-Friendly Mode**
 Rewrites content using short sentences and simple words to improve readability.
 
-Multilingual Translation
+**Multilingual Translation**
 Translates educational content into multiple languages.
 
-Smart Summarization
+**Smart Summarization**
 Generates concise summaries of long educational texts.
 
-Explain with Examples
+**Explain with Examples**
 Provides simple explanations with real-world examples.
 
-Accessibility Score
+**Accessibility Score**
 Shows improvement in readability before and after processing.
 
-How It Works
+**How It Works**
 
-User enters educational content.
+=> User enters educational content.
 
-The system sends the request to the backend API.
+=> The system sends the request to the backend API.
 
-The backend processes the request using the AI model.
+=> The backend processes the request using the AI model.
 
-The AI generates an accessible version of the content.
+=> The AI generates an accessible version of the content.
 
-The result is displayed to the user instantly.
+=> The result is displayed to the user instantly.
 
-Impact
+**Impact**
 
-EduAccess AI promotes inclusive education by making learning materials accessible to a wider range of students.
+=>EduAccess AI promotes inclusive education by making learning materials accessible to a wider range of students.
 
-The system supports the goal of equitable education for all learners by reducing comprehension barriers.
+=>The system supports the goal of equitable education for all learners by reducing comprehension barriers.
